@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-const path = require('path');
 const pkg = require('../../package');
 const glob = require('glob-all');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
@@ -7,11 +6,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 module.exports = () => ({
-
-    output: {
-        path: path.resolve(__dirname, '../../assets'),
-        filename: "[name].min.js"
-    },
 
     module: {
         rules: [
@@ -34,18 +28,11 @@ module.exports = () => ({
                 ]
             },
             {
-                test: /\.(jpe?g|png|gif)$/,
-                use: [{
-                    loader: "url-loader",
-                    options: {
-                        name: '[name].[ext]',
-                        limit: 8192
-                    }
-                }]
-            },
-            {
-                test: /\.(ttf|eot|svg|woff)$/,
-                use: 'file-loader'
+                test: /\.(jpe?g|png|gif|ttf|eot|svg|woff)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]'
+                }
             },
             {
                 test: /\.js$/,
@@ -59,8 +46,6 @@ module.exports = () => ({
         new webpack.LoaderOptionsPlugin({
             minimize: true
         }),
-
-        new MiniCssExtractPlugin('[name].min.css'),
 
         new PurgecssPlugin({
             paths: glob.sync(['./src/js/*.js', './templates/*.php', './templates/**/*.php'])
@@ -76,7 +61,7 @@ module.exports = () => ({
                     {source: './assets', destination: './build/assets'},
                     {source: './includes', destination: './build/includes'},
                     {source: './templates', destination: './build/templates'},
-                    {source: './*.php', destination: './build'},
+                    {source: './*.php', destination: './build'}
                 ],
 
                 archive: [
